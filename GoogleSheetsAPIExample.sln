@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleSheetsAPIExample", "GoogleSheetsAPIExample\GoogleSheetsAPIExample.csproj", "{A879F29F-0909-4618-802A-70B0E1B408AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A879F29F-0909-4618-802A-70B0E1B408AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A879F29F-0909-4618-802A-70B0E1B408AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A879F29F-0909-4618-802A-70B0E1B408AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A879F29F-0909-4618-802A-70B0E1B408AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A87658EE-2237-4B44-93A7-BF2A5FEA67E6}
+	EndGlobalSection
+EndGlobal
