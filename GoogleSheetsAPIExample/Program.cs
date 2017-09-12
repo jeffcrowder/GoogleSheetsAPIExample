@@ -17,6 +17,7 @@ namespace SheetsQuickstart
 {
     class Program
     {
+
         // If modifying these scopes, delete your previously saved credentials
         // at ~/.credentials/sheets.googleapis.com-dotnet-quickstart.json
         static string[] Scopes = { SheetsService.Scope.Spreadsheets };
@@ -131,19 +132,22 @@ namespace SheetsQuickstart
 
 
             SqlConnection sqlConnection = new SqlConnection("Data Source=tul-mssql;Initial Catalog=Division;User ID=tqisadmin;Password=admin2k");
+            //SqlConnection sqlConnection = new SqlConnection("Data Source=tul-sqldev;Initial Catalog=TulQual;User ID=tqisadmin;Password=admin2k");
             SqlCommand cmd = new SqlCommand();
             SqlDataReader reader;
-            //cmd.CommandText = "select top 5 [linenbr] from [Division].[dbo].[asyTestRecords]";
-                       cmd.CommandText = "Select LineNbr,passfail,cast(count(*) * 100.0 / sum(count(*))over(partition BY linenbr) as decimal (10, 2)) pctTotals " +
+
+            cmd.CommandText = "Select LineNbr,passfail,cast(count(*) * 100.0 / sum(count(*))over(partition BY linenbr) as decimal (10, 2)) pctTotals " +
             "FROM[Division].[dbo].[asyTestRecords]" +
             "WHERE Computer = 'LN'and shiftNbr = 1 and datepart(DAYOFYEAR, [DTShiftStart]) = DATEPART(DAyofyear, current_timestamp)" +
             "group BY linenbr,shiftnbr,passfail order bY LineNbr, passfail desc";
+
+            //cmd.CommandText = "SELECT[LineNbr],[pctTotals] FROM[TulQual].[dbo].[vwLiveFPYFirstShift] WHERE passfail = 'P'ORDER BY [LineNbr]";
 
             cmd.CommandType = CommandType.Text;
             cmd.Connection = sqlConnection;
 
             sqlConnection.Open();
-
+            cmd.CommandTimeout = 60;
             reader = cmd.ExecuteReader();
 
             // Data is accessible through the DataReader object here.
@@ -154,9 +158,9 @@ namespace SheetsQuickstart
                 while (reader.Read())
                 {
                     Console.WriteLine("\t{0}\t{1}\t{2}", reader.GetSqlInt16(0).ToSqlString(), reader.GetSqlString(1), reader.GetSqlDecimal(2).ToSqlString());
-                    //reader.GetString(1));
+                    //Console.WriteLine("{0}\t{1}", reader.GetSqlInt16(0).ToSqlString(), reader.GetSqlDecimal(1).ToSqlString());
                     cnt++;
-                    Console.Write(cnt);
+                    //Console.Write(cnt);
                 }
                 System.Threading.Thread.Sleep(3000);
             }
