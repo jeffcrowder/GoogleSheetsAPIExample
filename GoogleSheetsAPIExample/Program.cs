@@ -28,11 +28,9 @@ namespace SheetsQuickstart
         {
             UserCredential credential;
 
-            using (var stream =
-                new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
+            using (var stream = new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
             {
-                string credPath = System.Environment.GetFolderPath(
-                    System.Environment.SpecialFolder.Personal);
+                string credPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
                 credPath = Path.Combine(credPath, ".credentials/sheets.googleapis.com-dotnet-quickstart.json");
 
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -51,16 +49,15 @@ namespace SheetsQuickstart
                 ApplicationName = ApplicationName,
             });
 
+            // Prints the data from a sample spreadsheet:
+            // https://docs.google.com/spreadsheets/d/1c54Cy_B43h5-nmE7r6Slvj2w8Pl0XFxgaWpTxO9s9So/edit#gid=0
+
             // Define request parameters.
             String spreadsheetId = "1c54Cy_B43h5-nmE7r6Slvj2w8Pl0XFxgaWpTxO9s9So";
             String readRange = "ReadData!A1:F";
 
-            SpreadsheetsResource.ValuesResource.GetRequest request =
-                    service.Spreadsheets.Values.Get(spreadsheetId, readRange);
-
-            // Prints the data from a sample spreadsheet:
-            // https://docs.google.com/spreadsheets/d/1c54Cy_B43h5-nmE7r6Slvj2w8Pl0XFxgaWpTxO9s9So/edit#gid=0
-
+            //API to get values from a sheet
+            SpreadsheetsResource.ValuesResource.GetRequest request = service.Spreadsheets.Values.Get(spreadsheetId, readRange);
             ValueRange response = request.Execute();
 
             IList<IList<Object>> values = response.Values;
@@ -78,10 +75,7 @@ namespace SheetsQuickstart
                 Console.WriteLine("No data found.");
             }
 
-            //Write some data
-            String writeRange = "WriteData!A1:ZZ";
-            ValueRange valueRange = new ValueRange();
-            valueRange.MajorDimension = "ROWS";//"ROWS";//"COLUMNS"
+            
 
             // here is the actual data to be sent to sheet
             //var headerList = new List<object>() { "CAL", "FPY", "AY" };
@@ -92,20 +86,46 @@ namespace SheetsQuickstart
             ,"Word71","Word72","Word73","Word74","Word75","Word76","Word77","Word78","Word79","Word80"};
 
             //var dataList = new List<object>() { 1, 2, 3 };
-            //This is a fucking HACK
+            //This is a fucking HACK need to add an initialize dataList method
             var dataList = new List<object>()
             
             {
                 1,1,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
                 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null
             };
-            
-            //valueRange.Values = new List<IList<object>> { headerList };
+
+            //Write some data
+            String writeRange = "WriteData!A1:ZZ";
+            ValueRange valueRange = new ValueRange();
+            valueRange.MajorDimension = "ROWS";
 
             //API method to clear the sheet
             ClearValuesRequest clearValuesRequest = new ClearValuesRequest();
             SpreadsheetsResource.ValuesResource.ClearRequest cr = service.Spreadsheets.Values.Clear(clearValuesRequest, spreadsheetId, writeRange);
             ClearValuesResponse clearResponse = cr.Execute();
+
+            //API method to batch update
+            DimensionRange dr = new DimensionRange
+            {
+                Dimension = "ROWS",
+                StartIndex = 1,
+                SheetId = 1809337217
+            };
+
+            DeleteDimensionRequest ddr = new DeleteDimensionRequest();
+            ddr.Range = dr;
+
+            Request r = new Request();
+            r.DeleteDimension = ddr;
+
+            List<Request> batchRequests = new List<Request>();// { "requests": [{ "deleteDimension": { "range": { "sheetId": 1809337217, "startIndex": 1}} }  ]};
+            batchRequests.Add(r);
+
+            BatchUpdateSpreadsheetRequest requestBody = new BatchUpdateSpreadsheetRequest();
+            requestBody.Requests = batchRequests;
+
+            SpreadsheetsResource.BatchUpdateRequest bRequest = service.Spreadsheets.BatchUpdate(requestBody, spreadsheetId);
+            BatchUpdateSpreadsheetResponse busr = bRequest.Execute();
 
             //API method to update the sheet
             valueRange.Values = new List<IList<object>> { headerList };
@@ -114,6 +134,7 @@ namespace SheetsQuickstart
             UpdateValuesResponse result;
             result = update.Execute();
 
+            /*
             //start the readKey in a new thread 
             Task.Factory.StartNew(() =>
             {
@@ -127,7 +148,7 @@ namespace SheetsQuickstart
             Random r = new Random();
 
             //Loop and update the data until enter key is hit to exit
-           /* do
+            do
             {
                 //clear the data
                 dataList.RemoveRange(0, 3);
@@ -149,7 +170,7 @@ namespace SheetsQuickstart
                 System.Threading.Thread.Sleep(3000);
             } while (!exit);
             */
-
+            
             SqlConnection sqlConnection = new SqlConnection("Data Source=tul-mssql;Initial Catalog=Division;User ID=tqisadmin;Password=admin2k");
             //SqlConnection sqlConnection = new SqlConnection("Data Source=tul-sqldev;Initial Catalog=TulQual;User ID=tqisadmin;Password=admin2k");
             SqlCommand cmd = new SqlCommand();
@@ -209,7 +230,7 @@ namespace SheetsQuickstart
                         dataList.Add(colValues[i]);
                     }
                     //This is the GOOGLE query Throttle they only allow 500 writes per 100 sec
-                    System.Threading.Thread.Sleep(500);
+                    System.Threading.Thread.Sleep(1000);
                     //Console.WriteLine("\t{0}\t{1}\t{2}", reader.GetSqlInt32(0).ToSqlString(), reader.GetSqlDateTime(1), reader.GetSqlDateTime(2));
 
                     try
