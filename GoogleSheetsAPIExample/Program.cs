@@ -65,8 +65,7 @@ namespace SheetsQuickstart
 
             //Write some data
             String writeRange = "WriteData!A1:ZZ";
-            ValueRange valueRange = new ValueRange();
-            valueRange.MajorDimension = "ROWS";
+            ValueRange valueRange = new ValueRange { MajorDimension = "ROWS" };
 
             Console.WriteLine("Clear the Sheet");
 
@@ -85,17 +84,14 @@ namespace SheetsQuickstart
                 SheetId = 1809337217
             };
 
-            DeleteDimensionRequest ddr = new DeleteDimensionRequest();
-            ddr.Range = dr;
+            DeleteDimensionRequest ddr = new DeleteDimensionRequest() { Range = dr };
 
-            Request r = new Request();
-            r.DeleteDimension = ddr;
+            Request r = new Request { DeleteDimension = ddr };
 
-            List<Request> batchRequests = new List<Request>();// { "requests": [{ "deleteDimension": { "range": { "sheetId": 1809337217, "startIndex": 1}} }  ]};
-            batchRequests.Add(r);
+            // { "requests": [{ "deleteDimension": { "range": { "sheetId": 1809337217, "startIndex": 1}} }  ]};
+            List<Request> batchRequests = new List<Request>() { r };
 
-            BatchUpdateSpreadsheetRequest requestBody = new BatchUpdateSpreadsheetRequest();
-            requestBody.Requests = batchRequests;
+            BatchUpdateSpreadsheetRequest requestBody = new BatchUpdateSpreadsheetRequest() { Requests = batchRequests };
 
             SpreadsheetsResource.BatchUpdateRequest bRequest = service.Spreadsheets.BatchUpdate(requestBody, spreadsheetId);
             BatchUpdateSpreadsheetResponse busr = bRequest.Execute();
@@ -129,8 +125,7 @@ namespace SheetsQuickstart
             reader = cmd.ExecuteReader();
 
             // Data is accessible through the DataReader object here.
-            ValueRange valueDataRange = new ValueRange();
-            valueDataRange.MajorDimension = "ROWS";
+            ValueRange valueDataRange = new ValueRange() { MajorDimension = "ROWS" };
 
             var dataList = new List<object>();
             valueDataRange.Values = new List<IList<object>> { dataList };
@@ -165,7 +160,7 @@ namespace SheetsQuickstart
                     }
                     catch(Exception e)
                     {
-                        Console.WriteLine("Whoa buddy slowdown {0}",throttleCount);
+                        Console.WriteLine("Whoa buddy slowdown {0}", throttleCount);
                         System.Threading.Thread.Sleep(3000);
                         throttleCount++;
                     }
